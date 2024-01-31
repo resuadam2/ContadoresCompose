@@ -72,6 +72,7 @@ fun Contador(countFinal: Int, incrementoTotal: (Int) -> Unit) {
             horizontalArrangement = Arrangement.Center,
         ){
             FilledTonalButton(onClick = {
+                // TODO comprobar aquí el incremento positivo y si no lo es o está vacío lanzar un Toast o algo por el estilo
                 count += increment.toInt()
                 incrementoTotal(increment.toInt())
             }) {
@@ -86,14 +87,15 @@ fun Contador(countFinal: Int, incrementoTotal: (Int) -> Unit) {
                 )
             }
         }
-        Row (
-            ) {
+        Row {
             OutlinedTextField(
                 value = increment,
                 onValueChange = {
+                    // TODO en cuanto comprobarmos en el click del botón, eliminar esta comprobación
                     if (it != "" && it.toInt() >= 0) increment = it
-                    else increment = "0"},
+                    else increment = "1"},
                 label = { Text(text = "Incremento") },
+                // TODO añadir clickable para que vacíe el campo y abra el teclado para modificar el incremento directamente
                 modifier = Modifier.width(100.dp),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             )
