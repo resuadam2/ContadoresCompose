@@ -1,11 +1,9 @@
 package com.example.contadorescompose
 
-import android.accessibilityservice.AccessibilityService.SoftKeyboardController
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,7 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -31,13 +28,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.contadorescompose.ui.theme.ContadoresComposeTheme
@@ -86,7 +80,7 @@ fun Contador(countFinal: Int, incrementoTotal: (Int) -> Unit) {
             FilledTonalButton(onClick = {
                 if (increment.isEmpty() || increment.toInt() <= 0) {
                     Toast.makeText(
-                        context, "El incremento debe ser un número positivo",
+                        context, context.getString(R.string.increment_positive_toast_text),
                         Toast.LENGTH_SHORT).show()
                 } else {
                     count += increment.toInt()
@@ -114,10 +108,12 @@ fun Contador(countFinal: Int, incrementoTotal: (Int) -> Unit) {
                 onValueChange = {
                     increment = it
                 },
-                modifier = Modifier.onFocusChanged {
-                    if(it.hasFocus) increment = ""
-                    else if (increment.isEmpty()) increment = "1"
-                }.width(120.dp),
+                modifier = Modifier
+                    .onFocusChanged {
+                        if (it.hasFocus) increment = ""
+                        else if (increment.isEmpty()) increment = "1"
+                    }
+                    .width(120.dp),
                 label = { Text(text = "Incremento") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             )

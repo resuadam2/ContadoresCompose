@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ContadoresCompose</string>
+    <string name="increment_positive_toast_text">El incremento debe ser un número positivo</string>
 </resources>

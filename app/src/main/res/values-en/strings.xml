@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ComposeCounters</string>
+    <string name="increment_positive_toast_text">Increments must be a positive number</string>
+</resources>
