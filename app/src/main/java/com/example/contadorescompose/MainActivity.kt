@@ -1,8 +1,11 @@
 package com.example.contadorescompose
 
+import android.accessibilityservice.AccessibilityService.SoftKeyboardController
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -27,7 +31,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.contadorescompose.ui.theme.ContadoresComposeTheme
@@ -59,10 +69,13 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun Contador(countFinal: Int, incrementoTotal: (Int) -> Unit) {
     var count by rememberSaveable { mutableStateOf(0) }
     var increment by rememberSaveable { mutableStateOf("1") }
+    val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
     Column (
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -72,15 +85,24 @@ fun Contador(countFinal: Int, incrementoTotal: (Int) -> Unit) {
             horizontalArrangement = Arrangement.Center,
         ){
             FilledTonalButton(onClick = {
-                // TODO comprobar aquí el incremento positivo y si no lo es o está vacío lanzar un Toast o algo por el estilo
-                count += increment.toInt()
-                incrementoTotal(increment.toInt())
+                if (increment.isEmpty() || increment.toInt() <= 0) {
+                    Toast.makeText(
+                        context, "El incremento debe ser un número positivo",
+                        Toast.LENGTH_SHORT).show()
+                } else {
+                    count += increment.toInt()
+                    incrementoTotal(increment.toInt())
+                }
+                focusManager.clearFocus() // Hide the keyboard
             }) {
                 Text(text = "Contador: $count")
             }
             Spacer(Modifier.size(10.dp))
             Text(text = "$count")
-            IconButton(onClick = { count = 0 }) {
+            IconButton(onClick = {
+                count = 0
+                focusManager.clearFocus() // Hide the keyboard
+            }) {
                 Icon(
                     Icons.Outlined.Delete,
                     contentDescription = "Delete button",
@@ -91,12 +113,13 @@ fun Contador(countFinal: Int, incrementoTotal: (Int) -> Unit) {
             OutlinedTextField(
                 value = increment,
                 onValueChange = {
-                    // TODO en cuanto comprobarmos en el click del botón, eliminar esta comprobación
-                    if (it != "" && it.toInt() >= 0) increment = it
-                    else increment = "1"},
+                    increment = it
+                },
+                modifier = Modifier.onFocusChanged {
+                    if(it.hasFocus) increment = ""
+                    else if (increment.isEmpty()) increment = "1"
+                }.width(120.dp),
                 label = { Text(text = "Incremento") },
-                // TODO añadir clickable para que vacíe el campo y abra el teclado para modificar el incremento directamente
-                modifier = Modifier.width(100.dp),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             )
         }
