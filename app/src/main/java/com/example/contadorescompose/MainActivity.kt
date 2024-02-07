@@ -69,7 +69,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun Contador(countFinal: Int, incrementoTotal: (Int) -> Unit) {
     var count by rememberSaveable { mutableStateOf(0) }
