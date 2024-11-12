@@ -46,93 +46,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Column (
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.SpaceEvenly,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Text(text = "Contadores", style = MaterialTheme.typography.displayLarge)
-                        var countFinal by rememberSaveable { mutableStateOf(0) }
-                        Contador(countFinal) { countFinal += it }
-                        Contador(countFinal) { countFinal += it }
-                        ContadorFinal(countFinal) { countFinal = 0 }
-                    }
+                   AppNavigation()
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun Contador(countFinal: Int, incrementoTotal: (Int) -> Unit) {
-    var count by rememberSaveable { mutableStateOf(0) }
-    var increment by rememberSaveable { mutableStateOf("1") }
-    val context = LocalContext.current
-    val focusManager = LocalFocusManager.current
-    Column (
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        ){
-        Row (
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-        ){
-            FilledTonalButton(onClick = {
-                if (increment.isEmpty() || increment.toInt() <= 0) {
-                    Toast.makeText(
-                        context, context.getString(R.string.increment_positive_toast_text),
-                        Toast.LENGTH_SHORT).show()
-                } else {
-                    count += increment.toInt()
-                    incrementoTotal(increment.toInt())
-                }
-                focusManager.clearFocus() // Hide the keyboard
-            }) {
-                Text(text = "Contador: $count")
-            }
-            Spacer(Modifier.size(10.dp))
-            Text(text = "$count")
-            IconButton(onClick = {
-                count = 0
-                focusManager.clearFocus() // Hide the keyboard
-            }) {
-                Icon(
-                    Icons.Outlined.Delete,
-                    contentDescription = "Delete button",
-                )
-            }
-        }
-        Row {
-            OutlinedTextField(
-                value = increment,
-                onValueChange = {
-                    increment = it
-                },
-                modifier = Modifier
-                    .onFocusChanged {
-                        if (it.hasFocus) increment = ""
-                        else if (increment.isEmpty()) increment = "1"
-                    }
-                    .width(120.dp),
-                label = { Text(text = "Incremento") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            )
-        }
-    }
-}
-
-@Composable
-fun ContadorFinal( countFinal: Int = 0, deleteIncrementoTotal: () -> Unit) {
-    Row (
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
-    ){
-        Text(text = "Contador final: $countFinal")
-        IconButton(onClick = { deleteIncrementoTotal() }) {
-            Icon(
-                Icons.Default.Delete,
-                contentDescription = "Delete button",
-            )
         }
     }
 }
