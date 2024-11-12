@@ -34,9 +34,10 @@ fun VariosContadoresScreen(modifier: Modifier = Modifier) {
     ){
         Text(
             text = "Contadores",
-            style = MaterialTheme.typography.displayLarge,
+            style = MaterialTheme.typography.displayMedium,
             textAlign = TextAlign.Center,
         )
+        Spacer(Modifier.size(16.dp))
         var countFinal by rememberSaveable { mutableStateOf(0) }
         ContadorMejorado(countFinal) { countFinal += it }
         ContadorMejorado(countFinal) { countFinal += it }
