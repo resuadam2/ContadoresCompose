@@ -1,6 +1,6 @@
 package com.example.contadorescompose.ui.state
 
 data class ContadoresEstadoAisladoState(
-
-    var countFinal: Int = 0,
+    var increment: String = "",
+    var count: Int = 0,
 )

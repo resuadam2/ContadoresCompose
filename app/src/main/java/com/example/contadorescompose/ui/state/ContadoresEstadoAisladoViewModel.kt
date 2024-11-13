@@ -9,23 +9,16 @@ class ContadoresEstadoAisladoViewModel: ViewModel() {
         get() = _state
 
 
-    fun incrementCountFinal(increment: Int) {
-        _state.countFinal += increment
-    }
-
-    fun resetCountFinal() {
-        _state.countFinal = 0
-    }
-
     fun incrementCount(increment: Int) {
-
+        _state.count += increment
     }
 
     fun resetCount() {
-
+        _state.count = 0
     }
 
-    fun modifyIncrementA(increment: String) {
-        _state.incrementA = increment
+
+    fun modifyIncrement(increment: String) {
+        _state.increment = increment
     }
 }
