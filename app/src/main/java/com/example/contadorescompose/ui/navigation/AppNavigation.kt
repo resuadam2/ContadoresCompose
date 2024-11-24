@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.contadorescompose.ui.screens.ContadoresAvanzadosScreen
+import com.example.contadorescompose.ui.screens.ContadoresConEstadoAisladoScreen
 import com.example.contadorescompose.ui.screens.MainScreen
 import com.example.contadorescompose.ui.screens.ScreenContadorSimple
 import com.example.contadorescompose.ui.screens.VariosContadoresScreen
@@ -25,6 +26,9 @@ fun AppNavigation() {
         }
         composable(AppScreens.VariosContadores.name) {
             VariosContadoresScreen()
+        }
+        composable(AppScreens.ContadoresConEstadoAisladoScreen.name) {
+            ContadoresConEstadoAisladoScreen()
         }
     }
 }

@@ -32,6 +32,11 @@ fun MainScreen(navController: NavHostController) {
         ) {
             Text("Contadores Avanzados")
         }
+        Button(
+            onClick = { navController.navigate("ContadoresConEstadoAisladoScreen") }
+        ) {
+            Text("Contadores con estado aislado")
+        }
 
     }
 }

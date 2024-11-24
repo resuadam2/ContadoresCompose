@@ -19,6 +19,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
@@ -32,36 +34,56 @@ import com.example.contadorescompose.ui.state.ContadoresEstadoAisladoViewModel
 
 @Composable
 fun ContadoresConEstadoAisladoScreen(vm: ContadoresEstadoAisladoViewModel = ContadoresEstadoAisladoViewModel()) {
-    Column (
+    ContadoresEstadoAisladoContent(vm)
+}
+
+@Composable
+fun ContadoresEstadoAisladoContent(vm: ContadoresEstadoAisladoViewModel) {
+    val state by vm.state.collectAsState()
+    Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-    ){
+    ) {
         Text(
             text = "Contadores avanzados",
             style = MaterialTheme.typography.displayMedium,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.size(16.dp))
-        ContadorEstadoAislado (
-            vm,
-            vm.state.countA,
-            vm.state.incrementA,
-            vm.state.countFinal
+        ContadorEstadoAislado(
+            count = state.countA,
+            increment = state.incrementA,
+            changeIncrement = { vm.changeIncrementA(it) },
+            incrementCounter = { vm.incrementCountA() },
+            resetCounter = { vm.resetCountA() },
+            incrementoTotal = { vm.incrementCountFinal(it) }
         )
-        { vm.incrementCountFinal(it) }
-        ContadorEstadoAislado(vm.state.countFinal) { vm.incrementCountFinal(it) }
-        ContadorFinal(vm.state.countFinal) { vm.resetCountFinal() }
+        Spacer(Modifier.size(16.dp))
+        ContadorEstadoAislado(
+            count = state.countB,
+            increment = state.incrementB,
+            changeIncrement = { vm.changeIncrementB(it) },
+            incrementCounter = { vm.incrementCountB() },
+            resetCounter = { vm.resetCountB() },
+            incrementoTotal = { vm.incrementCountFinal(it) }
+        )
+        ContadorFinalEstadoAislado(
+            countFinal = state.countFinal
+        ) { vm.resetCountFinal() }
     }
 }
 
 
 @Composable
 fun ContadorEstadoAislado(
-    vm: ContadoresEstadoAisladoViewModel,
     count: Int,
     increment: String,
-    incrementoTotal: (Int) -> Unit) {
+    changeIncrement: (String) -> Unit,
+    incrementCounter: () -> Unit,
+    resetCounter: () -> Unit,
+    incrementoTotal: (Int) -> Unit
+) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     Column (
@@ -78,7 +100,7 @@ fun ContadorEstadoAislado(
                         context, context.getString(R.string.increment_positive_toast_text),
                         Toast.LENGTH_SHORT).show()
                 } else {
-                    /* TODO */
+                    incrementCounter()
                     incrementoTotal(increment.toInt())
                 }
                 focusManager.clearFocus() // Hide the keyboard
@@ -88,7 +110,7 @@ fun ContadorEstadoAislado(
             Spacer(Modifier.size(10.dp))
             Text(text = "$count")
             IconButton(onClick = {
-                /* TODO */
+                resetCounter()
                 focusManager.clearFocus() // Hide the keyboard
             }) {
                 Icon(
@@ -101,12 +123,12 @@ fun ContadorEstadoAislado(
             OutlinedTextField(
                 value = increment,
                 onValueChange = {
-                    /* TODO */
+                    changeIncrement(it)
                 },
                 modifier = Modifier
                     .onFocusChanged {
-                        if (it.hasFocus) vm.modifyIncrementA("")
-                        else if (increment.isEmpty()) vm.modifyIncrementA("1")
+                        if (it.hasFocus) changeIncrement("")
+                        else if (increment.isEmpty()) changeIncrement("1")
                     }
                     .width(120.dp),
                 label = { Text(text = "Incremento") },
@@ -117,13 +139,13 @@ fun ContadorEstadoAislado(
 }
 
 @Composable
-fun ContadorFinalEstadoAislado(countFinal: Int = 0, deleteIncrementoTotal: () -> Unit) {
+fun ContadorFinalEstadoAislado(countFinal: Int, resetCountFinal: () -> Unit) {
     Row (
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
     ){
         Text(text = "Contador final: $countFinal")
-        IconButton(onClick = { deleteIncrementoTotal() }) {
+        IconButton(onClick = resetCountFinal) {
             Icon(
                 Icons.Default.Delete,
                 contentDescription = "Delete button",
